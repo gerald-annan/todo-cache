@@ -9,4 +9,8 @@ defmodule Todo.Database do
   def store(key, data) do
     GenServer.cast(__MODULE__, {:store, key, data})
   end
+
+  def get(key) do
+    GenServer.call(__MODULE__, {:get, key})
+  end
 end
