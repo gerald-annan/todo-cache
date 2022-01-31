@@ -19,7 +19,7 @@ defmodule Todo.Server do
     {:reply, Todo.List.entries(key, todo_list), state}
   end
 
-  def handle_cast({:add_entry, entry}, {name, todo_list} = state) do
-    {:noreply, {name, Todo.List.add(todo_list, entry)}
+  def handle_cast({:add_entry, entry}, {name, todo_list}) do
+    {:noreply, {name, Todo.List.add(todo_list, entry)}}
   end
 end
