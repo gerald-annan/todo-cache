@@ -13,4 +13,9 @@ defmodule Todo.Database do
   def get(key) do
     GenServer.call(__MODULE__, {:get, key})
   end
+
+  def init(_) do
+    File.mkdir_p!(@db_folder)
+    {:ok, nil}
+  end
 end
