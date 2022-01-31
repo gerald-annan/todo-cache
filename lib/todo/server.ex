@@ -2,7 +2,7 @@ defmodule Todo.Server do
   use GenServer
 
   def init(name) do
-    {:ok, {name, Todo.Database.get(name) || []}}
+    {:ok, {name, Todo.Database.get(name) || Todo.List.new()}}
   end
 
   def start(process_name), do: GenServer.start(__MODULE__, process_name)
