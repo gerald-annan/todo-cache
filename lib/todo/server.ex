@@ -20,6 +20,8 @@ defmodule Todo.Server do
   end
 
   def handle_cast({:add_entry, entry}, {name, todo_list}) do
-    {:noreply, {name, Todo.List.add(todo_list, entry)}}
+    new_list = Todo.List.add(todo_list, entry)
+    Todo.Database.store(name, new_list)
+    {:noreply, {name, new_list}}
   end
 end

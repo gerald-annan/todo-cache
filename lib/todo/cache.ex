@@ -2,6 +2,7 @@ defmodule Todo.Cache do
   use GenServer
 
   def init(init_arg \\ %{}) do
+    Todo.Database.start()
     {:ok, init_arg}
   end
 
