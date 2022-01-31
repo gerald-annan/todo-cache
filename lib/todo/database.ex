@@ -23,5 +23,11 @@ defmodule Todo.Database do
     Path.join(@db_folder, to_string(key))
   end
 
-  
+  def handle_cast({:store, key, data}, state) do
+    key
+    |> file_name()
+    |> File.write!(:erlang.term_to_binary(data))
+
+    {:noreply, state}
+  end
 end
