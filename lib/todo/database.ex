@@ -18,4 +18,10 @@ defmodule Todo.Database do
     File.mkdir_p!(@db_folder)
     {:ok, nil}
   end
+
+  defp file_name(key) do
+    Path.join(@db_folder, to_string(key))
+  end
+
+  
 end
