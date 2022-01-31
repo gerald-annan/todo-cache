@@ -7,8 +7,8 @@ defmodule Todo.Cache do
 
   def start(), do: GenServer.start(__MODULE__, %{}, name: __MODULE__)
 
-  def server_process(process_name, cache_pid \\ __MODULE__) do
-    GenServer.call(cache_pid, {:server_process, process_name})
+  def server_process(process_name) do
+    GenServer.call(__MODULE__, {:server_process, process_name})
   end
 
   def handle_call({:server_process, process_name}, _, state) do
@@ -17,7 +17,7 @@ defmodule Todo.Cache do
         {:reply, process_id, state}
 
       :error ->
-        process = Todo.Server.start()
+        process = Todo.Server.start(process_name)
         Map.put_new(state, process_name, process)
         {:reply, process, state}
     end

@@ -1,11 +1,11 @@
 defmodule Todo.Server do
   use GenServer
 
-  def init(_init_arg \\ []) do
-    {:ok, []}
+  def init(name) do
+    {:ok, {name, []}}
   end
 
-  def start(), do: GenServer.start(__MODULE__, nil)
+  def start(process_name), do: GenServer.start(__MODULE__, process_name)
 
   def add_entry({:ok, server_id}, entry) do
     GenServer.cast(server_id, {:add_entry, entry})
@@ -15,11 +15,11 @@ defmodule Todo.Server do
     GenServer.call(server_id, {:entries, key})
   end
 
-  def handle_call({:entries, key}, _, state) do
-    {:reply, Todo.List.entries(key, state), state}
+  def handle_call({:entries, key}, _, {_, todo_list} = state) do
+    {:reply, Todo.List.entries(key, todo_list), state}
   end
 
-  def handle_cast({:add_entry, entry}, state) do
-    {:noreply, state ++ [entry]}
+  def handle_cast({:add_entry, entry}, {name, todo_list} = state) do
+    {:noreply, {name, Todo.List.add(todo_list, entry)}
   end
 end
