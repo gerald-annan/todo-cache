@@ -16,34 +16,24 @@ defmodule Todo.Database do
 
   def init(_) do
     File.mkdir_p!(@db_folder)
-    {:ok, 1..3 |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)}
+    {:ok, {0, 1..3 |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)}}
   end
 
-  defp file_name(key) do
-    Path.join(@db_folder, to_string(key))
+  def next(active_worker), do: if(active_worker < 3, do: active_worker + 1, else: 0)
+
+  def handle_cast(msg, {active_worker, workers}) do
+    workers
+    |> Enum.fetch!(active_worker)
+    |> send(msg)
+
+    {:noreply, {next(active_worker), workers}}
   end
 
-  def handle_cast({:store, key, data}, state) do
-    spawn(fn ->
-      key
-      |> file_name()
-      |> File.write!(:erlang.term_to_binary(data))
-    end)
+  def handle_call(msg, caller, {active_worker, workers}) do
+    workers
+    |> Enum.fetch!(active_worker)
+    |> send({msg, caller})
 
-    {:noreply, state}
-  end
-
-  def handle_call({:get, key}, caller, state) do
-    spawn(fn ->
-      data =
-        case File.read(file_name(key)) do
-          {:ok, contents} -> :erlang.binary_to_term(contents)
-          _ -> nil
-        end
-
-      GenServer.reply(caller, data)
-    end)
-
-    {:noreply, state}
+    {:noreply, {next(active_worker), workers}}
   end
 end
