@@ -1,5 +1,6 @@
 defmodule Todo.Database do
   use GenServer
+  @workers 3
   @db_folder "./persist"
 
   def start do
@@ -16,10 +17,10 @@ defmodule Todo.Database do
 
   def init(_) do
     File.mkdir_p!(@db_folder)
-    {:ok, {0, 1..3 |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)}}
+    {:ok, {0, 1..@workers |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)}}
   end
 
-  def next(active_worker), do: if(active_worker < 3, do: active_worker + 1, else: 0)
+  def next(active_worker), do: if(active_worker < @workers, do: active_worker + 1, else: 0)
 
   def handle_cast(msg, {active_worker, workers}) do
     workers
