@@ -2,8 +2,13 @@ defmodule Todo.Cache do
   use GenServer
 
   def init(init_arg \\ %{}) do
-    Todo.Database.start()
+    send(self(), :real_init)
     {:ok, init_arg}
+  end
+
+  def handle_info(:real_init, state) do
+    Todo.Database.start()
+    {:noreply, state}
   end
 
   def start(), do: GenServer.start(__MODULE__, %{}, name: __MODULE__)
