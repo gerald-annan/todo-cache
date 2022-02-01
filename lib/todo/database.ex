@@ -16,7 +16,7 @@ defmodule Todo.Database do
 
   def init(_) do
     File.mkdir_p!(@db_folder)
-    {:ok, nil}
+    {:ok, 1..3 |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)}
   end
 
   defp file_name(key) do
