@@ -1,11 +1,11 @@
 defmodule Todo.DatabaseWorker do
   @db_folder "./persist"
 
-  def start() do
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+  def start(db_folder) do
+    GenServer.start(__MODULE__, db_folder, name: __MODULE__)
   end
 
-  def init(_) do
+  def init(db_folder) do
     {:ok, nil}
   end
 
