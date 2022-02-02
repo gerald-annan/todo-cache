@@ -9,12 +9,12 @@ defmodule Todo.DatabaseWorker do
     {:ok, nil}
   end
 
-  def get(msg, caller, active_worker) do
-    GenServer.call(active_worker, {msg, caller})
+  def get(msg, caller, {_, worker_pid}) do
+    GenServer.call(worker_pid, {msg, caller})
   end
 
-  def store(msg, active_worker) do
-    GenServer.cast(active_worker, msg)
+  def store(msg, {_, worker_pid}) do
+    GenServer.cast(worker_pid, msg)
   end
 
   def handle_cast({:store, key, data}, state) do

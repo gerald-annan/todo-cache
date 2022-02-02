@@ -7,11 +7,9 @@ defmodule Todo.List do
     todoList ++ [new_entry]
   end
 
-  def entries(key, todoList) do
+  def entries(value, todoList) do
     Enum.filter(todoList, fn item ->
-      item[:date] == key or item[:title] == key
+      item[:date] == value or item[:title] == value
     end)
-
-    todoList
   end
 end
