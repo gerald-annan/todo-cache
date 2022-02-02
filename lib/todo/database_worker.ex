@@ -9,10 +9,10 @@ defmodule Todo.DatabaseWorker do
     {:ok, nil}
   end
 
-  def get({}) do
+  def get(msg, caller, active_worker) do
+    GenServer.call(active_worker, {msg, caller})
   end
 
-  @spec store(any, atom | pid | port | reference | {atom, atom}) :: any
   def store(msg, active_worker) do
     GenServer.cast(active_worker, msg)
   end

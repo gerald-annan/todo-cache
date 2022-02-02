@@ -32,14 +32,11 @@ defmodule Todo.Database do
 
   def handle_cast(msg, {active_worker, workers}) do
     Todo.DatabaseWorker.store(msg, choose_worker(workers, active_worker))
-
     {:noreply, {next(active_worker), workers}}
   end
 
   def handle_call(msg, caller, {active_worker, workers}) do
-    workers
-    |> Enum.fetch!(active_worker)
-    |> send({msg, caller})
+    Todo.DatabaseWorker.get(msg, caller, choose_worker(workers, active_worker))
 
     {:noreply, {next(active_worker), workers}}
   end
