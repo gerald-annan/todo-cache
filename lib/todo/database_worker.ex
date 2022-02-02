@@ -9,6 +9,12 @@ defmodule Todo.DatabaseWorker do
     {:ok, nil}
   end
 
+  def get({}) do
+  end
+
+  def store() do
+  end
+
   def handle_cast({:store, key, data}, state) do
     spawn(fn ->
       key

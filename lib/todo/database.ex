@@ -17,7 +17,14 @@ defmodule Todo.Database do
 
   def init(_) do
     File.mkdir_p!(@db_folder)
-    {:ok, {0, 1..@workers |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)}}
+
+    workers =
+      1..@workers
+      |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)
+      |> Enum.with_index()
+      |> Enum.into(%{})
+
+    {:ok, {0, workers}}
   end
 
   def next(active_worker), do: if(active_worker < @workers, do: active_worker + 1, else: 0)
