@@ -21,14 +21,14 @@ defmodule Todo.Database do
     workers =
       1..@workers
       |> Enum.map(fn _ -> Todo.DatabaseWorker.start() end)
-      |> Enum.with_index()
+      |> Enum.with_index(fn element, index -> {index, element} end)
       |> Enum.into(%{})
 
     {:ok, {0, workers}}
   end
 
   def next(active_worker), do: if(active_worker < @workers, do: active_worker + 1, else: 0)
-  def choose_worker(workers, active_worker), do: workers |> Enum.fetch!(active_worker)
+  def choose_worker(workers, active_worker), do: workers |> Map.fetch!(active_worker)
 
   def handle_cast(msg, {active_worker, workers}) do
     Todo.DatabaseWorker.store(msg, choose_worker(workers, active_worker))
@@ -37,7 +37,6 @@ defmodule Todo.Database do
 
   def handle_call(msg, caller, {active_worker, workers}) do
     Todo.DatabaseWorker.get(msg, caller, choose_worker(workers, active_worker))
-
     {:noreply, {next(active_worker), workers}}
   end
 end
