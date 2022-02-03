@@ -6,7 +6,7 @@ defmodule Todo.DatabaseWorker do
   end
 
   def init(_) do
-    {:ok, nil}
+    {:ok, @db_folder}
   end
 
   def get(msg, caller, {_, worker_pid}) do
@@ -20,7 +20,7 @@ defmodule Todo.DatabaseWorker do
   def handle_cast({:store, key, data}, state) do
     spawn(fn ->
       key
-      |> file_name()
+      |> file_name(state)
       |> File.write!(:erlang.term_to_binary(data))
     end)
 
@@ -30,7 +30,7 @@ defmodule Todo.DatabaseWorker do
   def handle_call({{:get, key}, caller}, _, state) do
     spawn(fn ->
       data =
-        case File.read(file_name(key)) do
+        case File.read(file_name(key, state)) do
           {:ok, contents} -> :erlang.binary_to_term(contents)
           _ -> nil
         end
@@ -41,7 +41,7 @@ defmodule Todo.DatabaseWorker do
     {:noreply, state}
   end
 
-  defp file_name(key) do
-    Path.join(@db_folder, to_string(key))
+  defp file_name(key, folder) do
+    Path.join(folder, to_string(key))
   end
 end
