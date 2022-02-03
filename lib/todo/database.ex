@@ -27,6 +27,7 @@ defmodule Todo.Database do
     {:ok, workers}
   end
 
+  @spec choose_worker(map, any) :: any
   def choose_worker(workers, key), do: workers |> Map.fetch!(:erlang.phash2(key, 3))
 
   def handle_cast({_, key, _} = msg, state) do
