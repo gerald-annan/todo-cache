@@ -11,6 +11,7 @@ defmodule Todo.Server do
     GenServer.cast(server_id, {:add_entry, entry})
   end
 
+  @spec entries({:ok, atom | pid | {atom, any} | {:via, atom, any}}, any) :: any
   def entries({:ok, server_id}, value) do
     GenServer.call(server_id, {:entries, value})
   end
