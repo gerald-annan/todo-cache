@@ -24,19 +24,18 @@ defmodule Todo.Database do
       |> Enum.with_index(fn element, index -> {index, element} end)
       |> Enum.into(%{})
 
-    {:ok, {0, workers}}
+    {:ok, workers}
   end
 
-  def next(active_worker), do: if(active_worker < @workers, do: active_worker + 1, else: 0)
-  def choose_worker(workers, active_worker), do: workers |> Map.fetch!(active_worker)
+  def choose_worker(workers, key), do: workers |> Map.fetch!(:erlang.phash2(key, 3))
 
-  def handle_cast(msg, {active_worker, workers}) do
-    Todo.DatabaseWorker.store(msg, choose_worker(workers, active_worker))
-    {:noreply, {next(active_worker), workers}}
+  def handle_cast({_, key, _} = msg, state) do
+    Todo.DatabaseWorker.store(msg, choose_worker(state, key))
+    {:noreply, state}
   end
 
-  def handle_call(msg, caller, {active_worker, workers}) do
-    Todo.DatabaseWorker.get(msg, caller, choose_worker(workers, active_worker))
-    {:noreply, {next(active_worker), workers}}
+  def handle_call({_, key} = msg, caller, state) do
+    Todo.DatabaseWorker.get(msg, caller, choose_worker(state, key))
+    {:noreply, state}
   end
 end
