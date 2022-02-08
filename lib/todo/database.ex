@@ -22,7 +22,7 @@ defmodule Todo.Database do
       1..@workers
       |> Enum.map(fn _ ->
         IO.puts("Starting database worker...")
-        Todo.DatabaseWorker.start()
+        Todo.DatabaseWorker.start_link()
       end)
       |> Enum.with_index(fn element, index -> {index, element} end)
       |> Enum.into(%{})
