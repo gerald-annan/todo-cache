@@ -11,7 +11,7 @@ defmodule Todo.Cache do
     {:noreply, state}
   end
 
-  def start() do
+  def start_link(_) do
     IO.puts("Starting the todo-cache...")
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
