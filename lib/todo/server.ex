@@ -2,11 +2,11 @@ defmodule Todo.Server do
   use GenServer
 
   def init(name) do
+    IO.puts("Starting database server...")
     {:ok, {name, Todo.List.new()}}
   end
 
   def start_link(process_name) do
-    IO.puts("Starting database server...")
     GenServer.start_link(__MODULE__, process_name)
   end
 

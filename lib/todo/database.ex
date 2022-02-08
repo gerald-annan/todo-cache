@@ -16,6 +16,7 @@ defmodule Todo.Database do
   end
 
   def init(_) do
+    IO.puts("Starting database server...")
     File.mkdir_p!(@db_folder)
 
     workers =
