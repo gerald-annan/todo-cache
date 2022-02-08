@@ -26,7 +26,7 @@ defmodule Todo.Cache do
         {:reply, process_id, state}
 
       :error ->
-        process = Todo.Server.start(process_name)
+        process = Todo.Server.start_link(process_name)
         Map.put_new(state, process_name, process)
         {:reply, process, state}
     end

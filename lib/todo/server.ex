@@ -5,7 +5,7 @@ defmodule Todo.Server do
     {:ok, {name, Todo.List.new()}}
   end
 
-  def start(process_name), do: GenServer.start(__MODULE__, process_name)
+  def start_link(process_name), do: GenServer.start_link(__MODULE__, process_name)
 
   def add_entry({:ok, server_id}, entry) do
     GenServer.cast(server_id, {:add_entry, entry})
