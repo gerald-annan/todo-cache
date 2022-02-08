@@ -7,7 +7,6 @@ defmodule Todo.Cache do
   end
 
   def handle_info(:real_init, state) do
-    Todo.Database.start_link()
     {:noreply, state}
   end
 
