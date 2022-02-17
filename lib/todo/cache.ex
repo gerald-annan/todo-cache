@@ -34,8 +34,11 @@ defmodule Todo.Cache do
     }
   end
 
-  def server_process(process_name) do
-    GenServer.call(__MODULE__, {:server_process, process_name})
+  def server_process(todo_list_name) do
+    case start_child(todo_list_name) do
+      {:ok, pid} -> pid
+      {:error, {:already_started, pid}} -> pid
+    end
   end
 
   def handle_call({:server_process, process_name}, _, state) do
