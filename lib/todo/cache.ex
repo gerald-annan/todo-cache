@@ -11,8 +11,12 @@ defmodule Todo.Cache do
   end
 
   def start_link(_) do
-    IO.puts("Starting the todo-cache...")
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+    IO.puts("Starting to-do cache")
+
+    DynamicSupervisor.start_link(
+      name: __MODULE__,
+      strategy: :one_for_one
+    )
   end
 
   def server_process(process_name) do

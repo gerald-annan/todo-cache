@@ -11,7 +11,7 @@ defmodule Todo.Server do
     GenServer.start_link(Todo.Server, name, name: via_tuple(name))
   end
 
-  def via_tuple(key), do: Todo.ProcessRegistry.via_tuple(key)
+  def via_tuple(name), do: Todo.ProcessRegistry.via_tuple({__MODULE__, name})
 
   def add_entry({:ok, server_id}, entry) do
     GenServer.cast(server_id, {:add_entry, entry})
