@@ -6,9 +6,12 @@ defmodule Todo.Server do
     {:ok, {name, Todo.List.new()}}
   end
 
-  def start_link(process_name) do
-    GenServer.start_link(__MODULE__, process_name)
+  def start_link(name) do
+    IO.puts("Starting to-do server for #{name}")
+    GenServer.start_link(Todo.Server, name, name: via_tuple(name))
   end
+
+  def via_tuple(key), do: Todo.ProcessRegistry.via_tuple(key)
 
   def add_entry({:ok, server_id}, entry) do
     GenServer.cast(server_id, {:add_entry, entry})
