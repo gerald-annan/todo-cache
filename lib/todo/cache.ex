@@ -19,6 +19,21 @@ defmodule Todo.Cache do
     )
   end
 
+  defp start_child(todo_list_name) do
+    DynamicSupervisor.start_child(
+      __MODULE__,
+      {Todo.Server, todo_list_name}
+    )
+  end
+
+  def child_spec(_arg) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      type: :supervisor
+    }
+  end
+
   def server_process(process_name) do
     GenServer.call(__MODULE__, {:server_process, process_name})
   end
