@@ -1,20 +1,33 @@
 defmodule Todo.DatabaseWorker do
+  use GenServer
   @db_folder "./persist"
 
-  def start_link do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link({_db_folder, worker_id}) do
+    IO.puts("Starting database worker #{worker_id}")
+    GenServer.start_link(
+      __MODULE__,
+      nil,
+      name: via_tuple(worker_id) ## registration
+    )
   end
 
+  @spec init(any) :: {:ok, <<_::72>>}
   def init(_) do
     {:ok, @db_folder}
   end
 
-  def get(msg, caller, {_, worker_pid}) do
-    GenServer.call(worker_pid, {msg, caller})
+  def get(worker_id, msg, caller) do
+    # GenServer.call(worker_pid, {msg, caller})
+    GenServer.call(via_tuple(worker_id), {msg, caller})
   end
 
-  def store(msg, {_, worker_pid}) do
-    GenServer.cast(worker_pid, msg)
+  def store(worker_id, msg) do
+    # GenServer.cast(worker_pid, msg)
+    GenServer.cast(via_tuple(worker_id), msg)
+  end
+
+  defp via_tuple(worker_id) do
+    Todo.ProcessRegistry.via_tuple({__MODULE__, worker_id})
   end
 
   def handle_cast({:store, key, data}, state) do
